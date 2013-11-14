@@ -69,7 +69,13 @@ module CapistranoUnicorn
 
           desc 'Start Unicorn master process'
           task :start, :roles => unicorn_roles, :except => {:no_release => true} do
-            run start_unicorn
+            run start_unicorn, pty: true do |ch, stream, data|
+              if data =~ />>>/
+                ch.send_data(Capistrano::CLI.password_prompt(">>> "))
+              else
+                Capistrano::Configuration.default_io_proc.call(ch, stream, data)
+              end
+            end
           end
 
           desc 'Stop Unicorn'
