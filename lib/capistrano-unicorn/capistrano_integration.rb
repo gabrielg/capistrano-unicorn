@@ -71,7 +71,7 @@ module CapistranoUnicorn
           task :start, :roles => unicorn_roles, :except => {:no_release => true} do
             run start_unicorn, pty: true do |ch, stream, data|
               if data =~ />>>/
-                ch.send_data(Capistrano::CLI.password_prompt(">>> "))
+                ch.send_data(Capistrano::CLI.password_prompt(">>> ") << "\n")
               else
                 Capistrano::Configuration.default_io_proc.call(ch, stream, data)
               end
